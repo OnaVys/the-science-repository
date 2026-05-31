@@ -247,9 +247,26 @@ without touching the original.
 - Don't accidentally fork into an organisation; fork into your own account.
 ```
 
+**Later — starting your *own* project (not today):**
+
+```text
+Forking keeps a visible link to this template — ideal for the workshop.
+For your own real project, start a clean, independent repo instead:
+  1. Code → Download ZIP   (a snapshot with no fork link)
+  2. Create a NEW repo on GitHub — public, or private if your data or project demands it
+  3. Copy the files in, commit, and push
+Today we all stay on the public fork.
+```
+
 **Speaker note:**
 Everyone now owns a complete copy of the template — data, engine, and outputs.
-This is the starting point for the whole three days. You can pull in new changes from the original repository. You can even contribute back to the original repository. Lets say you find a cool new software, you can let us know by contributing back to the repository you forked from
+This is the starting point for the whole three days. You can pull in new changes from the original repository. You can even contribute back to the original repository. Lets say you find a cool new software, you can let us know by contributing back to the repository you forked from.
+On the inevitable "is my public repo findable?" question: treat public as public.
+GitHub repos and Pages sites *can* be crawled and indexed, so "nobody has the
+link" is not privacy. The real protection is structural — the `.gitignore` keeps
+raw/processed data out of the repo entirely, so even a public repo never contains
+private data. If the *project itself* must stay hidden, use a private repo
+(GitHub Education gives you private Pages).
 
 ---
 
@@ -469,6 +486,10 @@ Easiest in RStudio:
   Repository URL: https://github.com/<your-username>/the-science-repository
   → Create Project
 
+Prefer buttons over tokens? GitHub Desktop (recommended companion):
+  Install desktop.github.com → sign in → File → Clone repository → your fork
+  Sign-in is handled in the browser — no Personal Access Token to set up.
+
 Cloning = downloading YOUR fork (with its full history) to your machine.
 ```
 
@@ -483,13 +504,19 @@ Cloning = downloading YOUR fork (with its full history) to your machine.
 - Pushing over HTTPS no longer accepts your password. When asked, paste a
   Personal Access Token (GitHub → Settings → Developer settings → PAT),
   or run  usethis::create_github_token()  then  gitcreds::gitcreds_set().
-  Simplest fallback: install GitHub Desktop and clone from there.
+  Simplest way to skip all of this: use GitHub Desktop (above) — it signs
+  you in through the browser and handles credentials for you.
 ```
 
 **Speaker note:**
 Cloning is the mirror image of forking: fork copies on GitHub, clone copies to
 your laptop. The identity + token setup is the single most common place people
-get stuck — budget time for it and have the PAT steps on a cheatsheet.
+get stuck — budget time for it and have the PAT steps on a cheatsheet. This is
+also why GitHub Desktop is worth recommending: its browser sign-in removes the
+PAT blocker entirely, and its visual diffs and branch/merge view are genuinely
+helpful later when branches diverge. Keep RStudio's Git pane as the default for
+day-to-day commits; offer Desktop to anyone fighting authentication or who
+prefers a GUI.
 
 ---
 
