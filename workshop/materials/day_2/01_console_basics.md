@@ -69,6 +69,16 @@ Logical values are what comparisons return. This is how filtering works later.
 "buy" == "buy"        #> [1] TRUE
 ```
 
+When a value is the *wrong* type — a number that arrived as text, say — convert it with an `as.*` function. This is how you **fix** a type bug once `class()` has revealed it.
+
+``` r
+as.numeric("42")      #> [1] 42      text -> number; now you can do maths on it
+as.character(42)      #> [1] "42"    number -> text
+as.numeric("seven")   #> [1] NA      can't convert -> NA, with a warning
+```
+
+(`factor()` in section 6 is the same move for categories: plain text -> a fixed set of levels.)
+
 Why care? Because a number stored as text cannot be averaged, and a category stored as a number can be averaged when it should not be. Type bugs are the single most common source of "but the numbers look wrong" in real analysis.
 
 ------------------------------------------------------------------------
@@ -143,6 +153,19 @@ Compare a vector to a value → a vector of TRUE/FALSE. This is the engine behin
 
 ``` r
 ages > 30                     #> [1]  TRUE  TRUE FALSE  TRUE FALSE
+```
+
+And here is the payoff: put a logical vector inside `[ ]` and R keeps only the elements where it is `TRUE`. Selecting the values that match a condition is exactly what `dplyr::filter()` will do to whole rows of a data frame this afternoon.
+
+``` r
+ages[ages > 30]               #> [1] 36 63 41   only the ages over 30
+```
+
+Combine conditions with `&` ("and"), `|` ("or") and `!` ("not"); test membership with `%in%`.
+
+``` r
+ages[ages > 30 & ages < 50]   #> [1] 36 41      over 30 AND under 50
+ages[ages %in% c(24, 63)]     #> [1] 63 24      either of these values
 ```
 
 ------------------------------------------------------------------------
@@ -225,13 +248,30 @@ Reading help pages is a core skill — every function's inputs are listed there.
 
 ------------------------------------------------------------------------
 
-## 8. Loops: doing something many times
+## 8. Control flow: making decisions and repeating work
 
-Back in section 4 we said R is vectorised — `ages + 1` adds one to every element with no loop in sight. That is true for *arithmetic*. But sometimes you want to repeat an *action* that isn't a simple sum: print a message, fit a model, read a file. That is what a loop is for.
+So far every line runs once, top to bottom. *Control flow* lets you change that: run a block only **when a condition holds** (`if`), or run it **once for each item** in a collection (`for`, `lapply`). Two everyday needs — deciding, and repeating.
 
-### The `for` loop — a compliment generator
+### Making a decision: `if` / `else`
 
-The `for` loop walks through a vector one element at a time and runs the same block of code for each. Read the first line as: "for each `word` in `compliments`, do the body once."
+`if` checks a single TRUE/FALSE value and runs its block only when it is `TRUE`. `else` is the fallback for when it is `FALSE`.
+
+``` r
+intention <- 6.2
+
+if (intention > 5) {
+  print("Likely to buy")
+} else {
+  print("Unlikely to buy")
+}
+#> [1] "Likely to buy"
+```
+
+The thing in the parentheses must boil down to **one** `TRUE` or `FALSE` — exactly what the comparisons in section 2 produce. (To decide element-by-element across a whole vector you would reach for `ifelse()` or `dplyr::case_when()` instead — that is the afternoon's job.)
+
+### Repeating with a `for` loop — a compliment generator
+
+Back in section 4 we said R is vectorised — `ages + 1` adds one to every element with no loop in sight. That is true for *arithmetic*. But sometimes you want to repeat an *action* that isn't a simple sum: print a message, fit a model, read a file. That is what a loop is for. The `for` loop walks through a vector one element at a time and runs the same block of code for each. Read the first line as: "for each `word` in `compliments`, do the body once."
 
 ``` r
 compliments <- c("brilliant", "thoughtful", "unstoppable")
@@ -244,7 +284,7 @@ for (word in compliments) {
 #> [1] "You are unstoppable"
 ```
 
-`word` is just a name *you* chose; on each pass it takes the next value from the vector. The body is everything inside the curly braces `{ }`.
+`word` is just a name *you* chose; on each pass it takes the next value from the vector. The body is everything inside the curly braces `{ }`. (`paste()` simply glues pieces of text together into one string, with a space between them.)
 
 Now the fun one — a Cards-Against-Humanity-style combination machine. A loop *inside* a loop runs the inner loop completely for every single step of the outer loop, so you get every combination:
 
@@ -268,7 +308,7 @@ A `for` loop is the right tool when you do something for its *side effect* — p
 
 ### `lapply` / `map` — run one recipe on many things at once
 
-Imagine you have three experimental groups' purchase-intention scores, one vector per group, kept together in a named *list*:
+Imagine you have three experimental groups' purchase-intention scores, one vector per group, kept together in a named *list*. (A list is like a vector, but each slot can hold anything at all — here, a whole vector in each slot.)
 
 ``` r
 by_condition <- list(
@@ -410,6 +450,7 @@ Everything we just did by hand — types, vectors, factors, NA, functions — is
 - A column is a vector; a table of vectors is a data frame.
 - NA means unknown and spreads; use `na.rm = TRUE` to ignore it.
 - Functions are `name(arguments)`; packages bundle extra functions you `library()` in once per session.
+- `if`/`else` runs a block only when a condition is `TRUE`; a logical vector inside `[ ]` keeps the elements that match — the root of all filtering.
 - A `for` loop repeats an action; `lapply`/`sapply`/`map` run one function across many items and collect the results — "say it once, repeat it everywhere".
 
 **NEXT:** `02_first_script.R` — the same ideas, on the real consumer dataset, saved as a script you can re-run.
